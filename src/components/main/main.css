@@ -1,0 +1,22 @@
+.main {
+    display: flex;
+    min-height: 80vh;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    background-color: wheat;
+    font-weight: bold;
+    flex-wrap: wrap;
+    margin-top: 10vh;
+}
+
+.main-cont {
+    width: 100%;    
+    text-align: center;
+    justify-items: center;
+    align-items: center;
+}
+
+.modal-button {
+    margin: 0 auto;
+}
