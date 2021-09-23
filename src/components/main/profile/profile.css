@@ -1,0 +1,33 @@
+.profile {
+    display: flex;
+}
+
+.photo-cont {
+    width: 50%;
+    padding: 20px;
+}
+
+.photo-cont img {
+    width: 80%;
+}
+
+.info-cont {
+    width: 50%;
+    padding: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.info-cont h2 {
+    font-size: 36px;
+}
+
+.info-cont p {
+    width: 100%;
+    font-size: 30px;
+}
+
+.info-cont a {
+    text-decoration: none;
+}

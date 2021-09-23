@@ -1,0 +1,10 @@
+.friends {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: center;
+}
+
+.friends a {
+    text-decoration: none;
+}
