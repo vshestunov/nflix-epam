@@ -3,7 +3,6 @@ import { Route } from "react-router-dom";
 import Friends from "./friends/friends";
 import People from "./people/people";
 import Favorites from "./favorites/favorites";
-import World from "./world/world";
 import Profile from "./profile/profile";
 import Home from "./home/home";
 import Shows from "./shows/shows";
@@ -33,6 +32,11 @@ const Main = (props) => {
                             isLoading={props.isLoading}
                             sortShows={props.sortShows}
                             sortMethod={props.sortMethod}
+                            searchQuery={props.searchQuery}
+                            setSearchQuery={props.setSearchQuery}
+                            selectedFilter={props.selectedFilter}
+                            setSelectedFilter={props.setSelectedFilter}
+                            genres={props.genres}
                         />
                     )}
                 />
@@ -78,7 +82,6 @@ const Main = (props) => {
                         />
                     )}
                 />
-                <Route exact path="/world" render={() => <World />} />
                 <Route exact path="/profile"  render={() => <Profile setIsLogin={props.setIsLogin} isLoading={props.isLoading} />} />
                 <Route exact path='/login' render={() => <Login setIsLogin={props.setIsLogin} isLoading={props.isLoading} />} />
                 <Route exact path="/" render={() => <Home />} />

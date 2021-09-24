@@ -6,6 +6,7 @@ import Loader from "../../loader/loader";
 import MySelect from "../../filters/MySelect";
 
 const Shows = (props) => {
+
     const addToFavs = (show) => {
         if (!props.isLogin) {
             props.setModalVisible(true);
@@ -99,24 +100,25 @@ const Shows = (props) => {
             </div>
             <div className='filters-cont'>
                 <h5>Searh by name</h5>
-                <input type='text' placeholder='name' />
+                <input type='text' placeholder='name' value={props.searchQuery} onChange={(event) => props.setSearchQuery(event.target.value)} />
                 <h5>Filter by genres:</h5>
-                <select className='genre'>
-                    <option>Genre</option>
-                </select>
-                <h5>Filter by time:</h5>
-                <select className='genre'>
-                    <option>Time</option>
-                </select>
-                <h5>Sort by rating:</h5>
+                <MySelect 
+                    options={props.genres}
+                    default='Filter by genres'
+                    action={props.setSelectedFilter}
+                    method={props.selectedFilter}
+                />
+                <h5>Sort shows:</h5>    
                 <MySelect 
                     options={[
-                        {value: 'from-top', name: 'From top'},
-                        {value: 'from-down', name: 'From down'}
+                        {value: 'time, from-top', name: 'By time from top'},
+                        {value: 'time, from-down', name: 'By time from down'},
+                        {value: 'rating, from-top', name: 'By rating from top'},
+                        {value: 'rating, from-down', name: 'By rating from down'}
                     ]}
-                    default='Sort by rating'
-                    sortShows={props.sortShows}
-                    sortMethod={props.sortMethod}
+                    default='Sort by time or rating'
+                    action={props.sortShows}
+                    method={props.sortMethod}
                 />
             </div>
         </div>
