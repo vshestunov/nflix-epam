@@ -19,7 +19,6 @@ const Header = (props) => {
             <NavLink className='header-link' to='/favorites' onClick={setModalTrue}>FAVORITES</NavLink>
             <NavLink className='header-link' to='/people' onClick={setModalTrue}>PEOPLE</NavLink>
             <NavLink className='header-link' to='/friends' onClick={setModalTrue}>FRIENDS</NavLink>
-            <NavLink className='header-link' to='/world'>WORLD?</NavLink>
             {props.isLogin ? (
                 <NavLink className='header-link' to='/profile'>PROFILE</NavLink>
             ) : (
