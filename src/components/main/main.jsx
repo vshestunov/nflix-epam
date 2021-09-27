@@ -30,8 +30,8 @@ const Main = (props) => {
                             setModalVisible={props.setModalVisible}
                             isLogin={props.isLogin}
                             isLoading={props.isLoading}
-                            sortShows={props.sortShows}
-                            sortMethod={props.sortMethod}
+                            sortMehod={props.sortMehod}
+                            setSortMethod={props.setSortMethod}
                             searchQuery={props.searchQuery}
                             setSearchQuery={props.setSearchQuery}
                             selectedFilter={props.selectedFilter}

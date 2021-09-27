@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import "./shows.css";
 import MyModal from "../../modal/modal";
@@ -6,6 +6,21 @@ import Loader from "../../loader/loader";
 import MySelect from "../../filters/MySelect";
 
 const Shows = (props) => {
+
+    let genresArr = [];
+    props.shows.map(show => {
+        show.genres.map(genre => {
+            genresArr.push(genre);
+        })
+    })
+
+    let genresrSet = [...new Set(genresArr)];
+
+    let genresOptions = [];
+
+    genresrSet.map(genre => {
+        genresOptions.push({value: genre, name: genre});
+    })
 
     const addToFavs = (show) => {
         if (!props.isLogin) {
@@ -99,27 +114,29 @@ const Shows = (props) => {
                 })}
             </div>
             <div className='filters-cont'>
-                <h5>Searh by name</h5>
-                <input type='text' placeholder='name' value={props.searchQuery} onChange={(event) => props.setSearchQuery(event.target.value)} />
-                <h5>Filter by genres:</h5>
-                <MySelect 
-                    options={props.genres}
-                    default='Filter by genres'
-                    action={props.setSelectedFilter}
-                    method={props.selectedFilter}
-                />
-                <h5>Sort shows:</h5>    
-                <MySelect 
-                    options={[
-                        {value: 'time, from-top', name: 'By time from top'},
-                        {value: 'time, from-down', name: 'By time from down'},
-                        {value: 'rating, from-top', name: 'By rating from top'},
-                        {value: 'rating, from-down', name: 'By rating from down'}
-                    ]}
-                    default='Sort by time or rating'
-                    action={props.sortShows}
-                    method={props.sortMethod}
-                />
+                <div className='filters-fixed-cont'>
+                    <h5>Searh by name</h5>
+                    <input type='text' placeholder='name' value={props.searchQuery} onChange={(event) => props.setSearchQuery(event.target.value)} />
+                    <h5>Filter by genres:</h5>
+                    <MySelect 
+                        options={genresOptions}
+                        default='All genres'
+                        action={props.setSelectedFilter}
+                        method={props.selectedFilter}
+                    />
+                    <h5>Sort shows:</h5>    
+                    <MySelect 
+                        options={[
+                            {value: 'time, from-top', name: 'By time from top'},
+                            {value: 'time, from-down', name: 'By time from down'},
+                            {value: 'rating, from-top', name: 'By rating from top'},
+                            {value: 'rating, from-down', name: 'By rating from down'}
+                        ]}
+                        default='Sort by time or rating'
+                        action={props.setSortMethod}
+                        method={props.sortMethod}
+                    />
+                </div>
             </div>
         </div>
     );
