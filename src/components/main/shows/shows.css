@@ -21,6 +21,10 @@
     margin: 15px;
 }
 
+.filters-fixed-cont {
+    position: fixed;
+}
+
 .filters-cont select,
 .filters-cont input {
     width: 100%;

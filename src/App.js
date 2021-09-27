@@ -1,10 +1,9 @@
 import "./App.css";
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Main from "./components/main/main";
 import Header from "./components/header/header";
 import Footer from "./components/footer/footer";
 import { BrowserRouter } from "react-router-dom";
-import { useState } from "react";
 import axios from "axios";
 import avatar from "./images/avatar.png";
 
@@ -25,42 +24,19 @@ function App() {
     const [isLoading, setIsLoading] = useState(false);
     let [sortMehod, setSortMethod] = useState("");
     const [searchQuery, setSearchQuery] = useState("");
-    const [selectedFilter, setSelectedFilter] = useState('');
+    const [selectedFilter, setSelectedFilter] = useState("");
 
-
-    async function getShows(shows) {
-        if (shows.length) {
-            return shows;
-        }
+    useEffect(async function() {
         const response = await axios.get("https://api.tvmaze.com/shows");
         setShows(response.data);
-    }
-
-    async function getGenres(genres) {
-      if (genres.length) {
-          return genres;
-      }
-      const response = await axios.get("https://api.tvmaze.com/shows");
-      let genresArr = [];
-      response.data.map(show => {
-          show.genres.map(genre => {
-              genresArr.push(genre);
-          })
-      })
-      let genresSet = [... new Set(genresArr)];
-      let genresOptions = [];
-      genresSet.map(genre => genresOptions.push({value: genre, name: genre}));
-      setGenres(genresOptions);
-  }
-
-    getGenres(genres);
+    }, []);
 
     useEffect(() => {
         setIsLoading(true);
         setTimeout(() => {
             setIsLoading(false);
         }, 200);
-    }, [isLogin, shows]);
+    }, [isLogin]);
 
     const addToFavorites = (newShow) => {
         setFavorites([...favorites, newShow]);
@@ -98,41 +74,49 @@ function App() {
         );
     };
 
-    const sortShows = (method) => {
-        setSortMethod(method);
-        if (method === "rating, from-top") {
-            setShows(
-                [...shows].sort((a, b) => b.rating.average - a.rating.average)
+    const sortedShows = useMemo(() => {
+        if (sortMehod === "rating, from-top") {
+            return [...shows].sort(
+                (a, b) => b.rating.average - a.rating.average
             );
-        } else if (method === "rating, from-down") {
-            setShows(
-                [...shows].sort((a, b) => a.rating.average - b.rating.average)
+        } else if (sortMehod === "rating, from-down") {
+            return [...shows].sort(
+                (a, b) => a.rating.average - b.rating.average
             );
-        } else if (method === "time, from-top") {
-            setShows(
-                [...shows].sort((a, b) => b.averageRuntime - a.averageRuntime)
+        } else if (sortMehod === "time, from-top") {
+            return [...shows].sort(
+                (a, b) => b.averageRuntime - a.averageRuntime
             );
-        } else if (method === "time, from-down") {
-            setShows(
-                [...shows].sort((a, b) => a.averageRuntime - b.averageRuntime)
+        } else if (sortMehod === "time, from-down") {
+            return [...shows].sort(
+                (a, b) => a.averageRuntime - b.averageRuntime
             );
+        } else if (!sortMehod) {
+            return shows;
         }
-    };
+    }, [shows, sortMehod]);
 
-    useEffect(() => {
-      setShows([...shows].filter(show => {
-        return show.genres.includes(selectedFilter);
-      }))
-    }, [selectedFilter])
+    const filteredAndSortedShows = useMemo(() => {
+        if (!selectedFilter) {
+            return sortedShows;
+        }
+        return sortedShows.filter((show) => {
+            return show.genres.includes(selectedFilter);
+        });
+    }, [selectedFilter, sortedShows]);
 
-    getShows(shows);
+    const sortedAndFilteredAndSearchedShows = useMemo(() => {
+        return filteredAndSortedShows.filter((show) => {
+            return show.name.toLowerCase().includes(searchQuery);
+        });
+    }, [filteredAndSortedShows, searchQuery]);
 
     return (
         <div className="App">
             <BrowserRouter>
                 <Header isLogin={isLogin} setModalVisible={setModalVisible} />
                 <Main
-                    shows={shows}
+                    shows={sortedAndFilteredAndSearchedShows}
                     favorites={favorites}
                     addToFavorites={addToFavorites}
                     removeFromFavorites={removeFromFavorites}
@@ -148,7 +132,8 @@ function App() {
                     isModalVisible={isModalVisible}
                     setModalVisible={setModalVisible}
                     isLoading={isLoading}
-                    sortShows={sortShows}
+                    sortMehod={sortMehod}
+                    setSortMethod={setSortMethod}
                     searchQuery={searchQuery}
                     setSearchQuery={setSearchQuery}
                     selectedFilter={selectedFilter}
