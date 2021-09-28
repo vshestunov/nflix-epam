@@ -2,8 +2,34 @@ import React from "react";
 import "./favorites.css";
 import { NavLink } from "react-router-dom";
 import ModalPage from "../../modal/modalPage";
+import { doc, getFirestore, getDocs, updateDoc, arrayRemove, collection } from "firebase/firestore";
+import { useState, useEffect } from "react/cjs/react.development";
+import { getAuth, onAuthStateChanged } from "@firebase/auth";
 
 const Favorites = (props) => {
+    const [favArr, setFavArr] = useState([]);
+    
+    const db = getFirestore();
+
+    const auth = getAuth();
+
+    useEffect(() => {
+        onAuthStateChanged(auth, (user) => {
+            if(user) {
+                (async () => {
+                    const querySnapshot = await getDocs(collection(db, "users"));
+                    querySnapshot.forEach((doc) => {
+                        if(doc.id === user.email) {
+                            let arr = [];
+                            doc.data().favorites.forEach(fav => arr.push(fav));
+                            setFavArr([...favArr, ...arr]);
+                        }
+                    });
+                })();
+            }
+          });
+    }, [auth]);
+
     if (!props.isLogin) {
         return (
             <ModalPage
@@ -13,26 +39,33 @@ const Favorites = (props) => {
         );
     }
 
-    const removeFromFavs = (show) => {
-        props.removeFromFavorites(show);
-    };
 
-    if (props.favorites.length) {
+    // const removeFromFavs = (show) => {
+    //     const user = doc(db, "users", compareMail);
+    //     const user = doc(collection('users').document(compareMail));
+    //     (async() => {
+    //         await updateDoc(user, {
+    //             favorites: arrayRemove(show)
+    //         });
+    //     })();
+    // };
+
+    if (favArr.length) {
         return (
             <div className="favorites">
-                {props.favorites.map((show) => {
+                {favArr.map((show) => {
                     return (
                         <div className="favShow" key={show.id}>
                             <NavLink to={`shows/${show.id}`}>
                                 <h4>{show.name}</h4>
                                 <img src={show.image.medium} />
                             </NavLink>
-                            <button
+                            {/* <button
                                 className="button"
                                 onClick={() => removeFromFavs(show)}
                             >
                                 Remove from favorites
-                            </button>
+                            </button> */}
                         </div>
                     );
                 })}

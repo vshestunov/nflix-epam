@@ -50,3 +50,9 @@
 .login .button {
     margin: 0 auto;
 }
+
+.span-link {
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+}

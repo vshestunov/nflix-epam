@@ -1,13 +1,32 @@
 import React from "react";
 import "./profile.css";
-import photo from "../../../images/myphoto.jpg";
 import { NavLink } from "react-router-dom";
 import Loader from "../../loader/loader";
+import { useHistory } from "react-router";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { useState } from "react/cjs/react.development";
 
 const Profile = (props) => {
+    const auth = getAuth();
+    const history = useHistory();
+    const [name, setName] = useState('');
+    const [mail, setMail] = useState('');
+    const [photo, setPhoto] = useState('');
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            setName(user.displayName);
+            setMail(user.email);
+            setPhoto(user.photoURL);
+        }
+      });
 
     if(props.isLoading) {
         return <Loader />
+    }
+
+    if(!props.isLogin) {
+        history.push('/login')
     }
 
     return (
@@ -16,9 +35,8 @@ const Profile = (props) => {
                 <img src={photo} alt="photo" />
             </div>
             <div className="info-cont">
-                <h2>VIACHESLAV SHESTUNOV</h2>
-                <p>e-mail: viacheslav_shestunov@epam.com</p>
-                <p>Phone: +380 050 806 69 72</p>
+                <h2>{name}</h2>
+                <p>e-mail: {mail}</p>
                 <NavLink to="/login">
                     <button className="button" onClick={() => props.setIsLogin(false)}>
                         LOGOUT

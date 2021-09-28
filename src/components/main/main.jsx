@@ -11,6 +11,7 @@ import Show from "./shows/show";
 import Login from "./login/login";
 
 const Main = (props) => {
+    
     return (
         <div className="main">
             <div className="main-cont">
@@ -20,9 +21,6 @@ const Main = (props) => {
                     render={() => (
                         <Shows
                             shows={props.shows}
-                            addToFavorites={props.addToFavorites}
-                            favorites={props.favorites}
-                            removeFromFavorites={props.removeFromFavorites}
                             likedShows={props.likedShows}
                             likeShow={props.likeShow}
                             dislikeShow={props.dislikeShow}
@@ -47,9 +45,6 @@ const Main = (props) => {
                     render={() => (
                         <People
                             peopleList={props.peopleList}
-                            addToFriends={props.addToFriends}
-                            removeFromFriends={props.removeFromFriends}
-                            friendList={props.friendList}
                             isLogin={props.isLogin}
                             isModalVisible={props.isModalVisible}
                             setModalVisible={props.setModalVisible}
@@ -61,8 +56,6 @@ const Main = (props) => {
                     path="/friends"
                     render={() => (
                         <Friends
-                            removeFromFriends={props.removeFromFriends}
-                            friendList={props.friendList}
                             isLogin={props.isLogin}
                             isModalVisible={props.isModalVisible}
                             setModalVisible={props.setModalVisible}
@@ -74,7 +67,6 @@ const Main = (props) => {
                     path="/favorites"
                     render={() => (
                         <Favorites
-                            favorites={props.favorites}
                             removeFromFavorites={props.removeFromFavorites}
                             isLogin={props.isLogin}
                             isModalVisible={props.isModalVisible}
@@ -82,8 +74,8 @@ const Main = (props) => {
                         />
                     )}
                 />
-                <Route exact path="/profile"  render={() => <Profile setIsLogin={props.setIsLogin} isLoading={props.isLoading} />} />
-                <Route exact path='/login' render={() => <Login setIsLogin={props.setIsLogin} isLoading={props.isLoading} />} />
+                <Route exact path="/profile"  render={() => <Profile setIsLogin={props.setIsLogin} isLogin={props.isLogin} isLoading={props.isLoading} />} />
+                <Route exact path='/login' render={() => <Login setIsLogin={props.setIsLogin} isLogin={props.isLogin} isLoading={props.isLoading} />} />        
                 <Route exact path="/" render={() => <Home />} />
             </div>
         </div>

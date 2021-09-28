@@ -5,26 +5,46 @@ import Header from "./components/header/header";
 import Footer from "./components/footer/footer";
 import { BrowserRouter } from "react-router-dom";
 import axios from "axios";
-import avatar from "./images/avatar.png";
+import { getFirestore, collection, getDocs } from "firebase/firestore";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 function App() {
     const [shows, setShows] = useState([]);
     const [genres, setGenres] = useState([]);
     const [likedShows, setLikedShows] = useState([]);
-    const [favorites, setFavorites] = useState([]);
-    const [friendList, setFriendsList] = useState([]);
-    const [peopleList, setPeopleList] = useState([
-        { name: "Igor", id: 1, email: "igor@gmail.com", photo: avatar },
-        { name: "Vasia", id: 2, email: "vasia@gmail.com", photo: avatar },
-        { name: "Oleg", id: 3, email: "oleg@gmail.com", photo: avatar },
-        { name: "Petr", id: 4, email: "petr@gmail.com", photo: avatar },
-    ]);
+    const [peopleList, setPeopleList] = useState([]);
     const [isLogin, setIsLogin] = useState(false);
     const [isModalVisible, setModalVisible] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
     let [sortMehod, setSortMethod] = useState("");
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedFilter, setSelectedFilter] = useState("");
+    const db = getFirestore();
+
+
+    const auth = getAuth();
+    useEffect(() => {
+        onAuthStateChanged(auth, (user) => {
+            if(user) {
+                (async () => {
+                    const querySnapshot = await getDocs(collection(db, "users"));
+                    let arr = [];
+                    querySnapshot.forEach((doc) => {
+                        if(doc.data().email !== user.email) {
+                            arr.push({
+                                id: doc.id,
+                                name: doc.data().name,
+                                email: doc.data().email,
+                                photo: doc.data().photoURL
+                            })
+                        }
+                    });
+                    setPeopleList([...peopleList, ...arr]);
+                })();
+            }
+          });
+    }, [auth]);
+
 
     useEffect(async function() {
         const response = await axios.get("https://api.tvmaze.com/shows");
@@ -38,18 +58,6 @@ function App() {
         }, 200);
     }, [isLogin]);
 
-    const addToFavorites = (newShow) => {
-        setFavorites([...favorites, newShow]);
-    };
-
-    const removeFromFavorites = (show) => {
-        setFavorites(
-            favorites.filter((el) => {
-                return show.id !== el.id;
-            })
-        );
-    };
-
     const likeShow = (show) => {
         setLikedShows([...likedShows, show]);
     };
@@ -58,18 +66,6 @@ function App() {
         setLikedShows(
             likedShows.filter((el) => {
                 return show.id !== el.id;
-            })
-        );
-    };
-
-    const addToFriends = (man) => {
-        setFriendsList([...friendList, man]);
-    };
-
-    const removeFromFriends = (man) => {
-        setFriendsList(
-            friendList.filter((el) => {
-                return man.id !== el.id;
             })
         );
     };
@@ -117,15 +113,9 @@ function App() {
                 <Header isLogin={isLogin} setModalVisible={setModalVisible} />
                 <Main
                     shows={sortedAndFilteredAndSearchedShows}
-                    favorites={favorites}
-                    addToFavorites={addToFavorites}
-                    removeFromFavorites={removeFromFavorites}
                     likeShow={likeShow}
                     dislikeShow={dislikeShow}
                     likedShows={likedShows}
-                    friendList={friendList}
-                    addToFriends={addToFriends}
-                    removeFromFriends={removeFromFriends}
                     peopleList={peopleList}
                     isLogin={isLogin}
                     setIsLogin={setIsLogin}
