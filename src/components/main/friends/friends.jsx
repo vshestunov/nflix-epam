@@ -7,29 +7,36 @@ import { useState, useEffect } from "react/cjs/react.development";
 import { getAuth, onAuthStateChanged } from "@firebase/auth";
 
 const Friends = (props) => {
-
-    const [friendList, setFriendlist] = useState([]);
-
+    const [friendList, setFriendList] = useState([]);
+    const [compareMail, setCompareMail] = useState('');
     const db = getFirestore();
-
     const auth = getAuth();
 
     useEffect(() => {
         onAuthStateChanged(auth, (user) => {
-            if(user) {
-                (async () => {
-                    const querySnapshot = await getDocs(collection(db, "users"));
-                    querySnapshot.forEach((doc) => {
-                        if(doc.id === user.email) {
-                            let arr = [];
-                            doc.data().friends.forEach(friend => arr.push(friend));
-                            setFriendlist([...friendList, ...arr]);
-                        }
-                    });
-                })();
-            }
+            setCompareMail(user.email);
+            (async () => {
+                const querySnapshot = await getDocs(collection(db, "users"));
+                querySnapshot.forEach((doc) => {
+                    if(doc.id === user.email) {
+                        let arr = [];
+                        doc.data().friends.forEach(man => arr.push(man));
+                        setFriendList([...arr]);
+                    }
+                });
+            })();
           });
-    }, [auth]);
+    }, [auth, db]);
+
+    const removeFromFriends = (man) => {
+        const user = doc(db, "users", compareMail);
+        (async () => {
+            await updateDoc(user, {
+                friends: arrayRemove(man),
+            });
+        })();
+        setFriendList(friendList.filter(el => el.name !== man.name));
+    }
 
     
     if (!props.isLogin) {
@@ -53,6 +60,12 @@ const Friends = (props) => {
                                 <img src={man.photo} />
                                 <p>Email: {man.email}</p>
                             </NavLink>
+                            <button
+                                className="button"
+                                onClick={() => removeFromFriends(man)}
+                            >
+                                Remove from friends
+                            </button> 
                         </div>
                     );
                 })}

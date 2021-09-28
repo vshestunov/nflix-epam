@@ -8,7 +8,7 @@ import {
     updateProfile
 } from "firebase/auth";
 import { useHistory } from "react-router";
-import { collection, addDoc, getFirestore, doc, setDoc } from "firebase/firestore";
+import { getFirestore, doc, setDoc } from "firebase/firestore";
 
 const Login = (props) => {
     const [userName, setUsetName] = useState("");
@@ -52,6 +52,7 @@ const Login = (props) => {
                             id: new Date(),
                             favorites: [],
                             friends: [],
+                            recs: [],
                             photoURL: 'https://media.istockphoto.com/photos/businessman-silhouette-as-avatar-or-default-profile-picture-picture-id476085198?s=612x612',
                         }))();
                     } catch (e) {

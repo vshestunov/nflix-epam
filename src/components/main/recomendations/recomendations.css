@@ -1,0 +1,29 @@
+.recs {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: center;
+}
+
+.recShow {
+    width: 150px;
+    border: 2px solid teal;
+    margin: 10px;
+}
+
+.recShow h4 {
+    font-size: 20px;
+}
+
+.recShow img {
+    width: 100px;
+}
+
+.recShow a {
+    text-decoration: none;
+    color: teal;
+}
+
+.recs a {
+    text-decoration: none;
+}

@@ -9,6 +9,7 @@ import Shows from "./shows/shows";
 import "./main.css";
 import Show from "./shows/show";
 import Login from "./login/login";
+import Recomendations from "./recomendations/recomendations";
 
 const Main = (props) => {
     
@@ -22,8 +23,7 @@ const Main = (props) => {
                         <Shows
                             shows={props.shows}
                             likedShows={props.likedShows}
-                            likeShow={props.likeShow}
-                            dislikeShow={props.dislikeShow}
+                            setLikedShows={props.setLikedShows}
                             isModalVisible={props.isModalVisible}
                             setModalVisible={props.setModalVisible}
                             isLogin={props.isLogin}
@@ -68,6 +68,17 @@ const Main = (props) => {
                     render={() => (
                         <Favorites
                             removeFromFavorites={props.removeFromFavorites}
+                            isLogin={props.isLogin}
+                            isModalVisible={props.isModalVisible}
+                            setModalVisible={props.setModalVisible}
+                        />
+                    )}
+                />
+                <Route
+                    exact
+                    path="/recomendations"
+                    render={() => (
+                        <Recomendations
                             isLogin={props.isLogin}
                             isModalVisible={props.isModalVisible}
                             setModalVisible={props.setModalVisible}

@@ -5,7 +5,7 @@ import Header from "./components/header/header";
 import Footer from "./components/footer/footer";
 import { BrowserRouter } from "react-router-dom";
 import axios from "axios";
-import { getFirestore, collection, getDocs } from "firebase/firestore";
+import { getFirestore, collection, getDocs, setDoc, doc } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 function App() {
@@ -45,11 +45,28 @@ function App() {
           });
     }, [auth]);
 
-
     useEffect(async function() {
-        const response = await axios.get("https://api.tvmaze.com/shows");
-        setShows(response.data);
-    }, []);
+        if(!auth) {
+            const response = await axios.get("https://api.tvmaze.com/shows");
+            setShows(response.data);
+        } else {
+            onAuthStateChanged(auth, (user) => {
+                (async () => {
+                    const querySnapshot = await getDocs(collection(db, "likedshows"));
+                    let dataAarr = [];
+                    let namesArr = [];
+                    querySnapshot.forEach((doc) => {
+                        dataAarr.push(doc.data());
+                        if(doc.data().emails.includes(user.email)) {
+                            namesArr.push(doc.id);
+                        }
+                    });
+                    setShows([...dataAarr]);
+                    setLikedShows([...namesArr]);
+                })();
+            });
+        }
+    }, [db, auth]);
 
     useEffect(() => {
         setIsLoading(true);
@@ -57,18 +74,6 @@ function App() {
             setIsLoading(false);
         }, 200);
     }, [isLogin]);
-
-    const likeShow = (show) => {
-        setLikedShows([...likedShows, show]);
-    };
-
-    const dislikeShow = (show) => {
-        setLikedShows(
-            likedShows.filter((el) => {
-                return show.id !== el.id;
-            })
-        );
-    };
 
     const sortedShows = useMemo(() => {
         if (sortMehod === "rating, from-top") {
@@ -113,8 +118,7 @@ function App() {
                 <Header isLogin={isLogin} setModalVisible={setModalVisible} />
                 <Main
                     shows={sortedAndFilteredAndSearchedShows}
-                    likeShow={likeShow}
-                    dislikeShow={dislikeShow}
+                    setLikedShows={setLikedShows}
                     likedShows={likedShows}
                     peopleList={peopleList}
                     isLogin={isLogin}

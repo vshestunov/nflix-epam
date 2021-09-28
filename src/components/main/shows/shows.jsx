@@ -12,15 +12,20 @@ import {
     arrayRemove,
     getDocs,
     collection,
-    setDoc
+    setDoc,
+    increment,
 } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import RecModalPage from "./recommendModal/recmodalPage";
 
 const Shows = (props) => {
-    const [compareMail, setCompareMail] = useState('');
+    const [compareMail, setCompareMail] = useState("");
+    const [friendList, setFriendList] = useState([]);
     const db = getFirestore();
     const auth = getAuth();
     const [favArr, setFavArr] = useState([]);
+    const [isRecModalVisible, setRecModalVisible] = useState(false);
+    let [showForReccomend, setShowForReccomend ]= useState('');
 
     useEffect(() => {
         onAuthStateChanged(auth, (user) => {
@@ -28,16 +33,18 @@ const Shows = (props) => {
             (async () => {
                 const querySnapshot = await getDocs(collection(db, "users"));
                 querySnapshot.forEach((doc) => {
-                    if(doc.id === user.email) {
+                    if (doc.id === user.email) {
                         let arr = [];
-                        doc.data().favorites.forEach(fav => arr.push(fav.name));
-                        setFavArr([...favArr, ...arr]);
+                        let friendsArr = [];
+                        doc.data().favorites.forEach((fav) => arr.push(fav.name));
+                        doc.data().friends.forEach(man => friendsArr.push(man));
+                        setFavArr([...arr]);
+                        setFriendList([...friendsArr]);
                     }
                 });
             })();
-            console.log(favArr);
         });
-    }, [auth,db]);
+    }, [auth, db]);
 
     let genresArr = [];
     props.shows.map((show) => {
@@ -65,27 +72,68 @@ const Shows = (props) => {
                 favorites: arrayUnion(show),
             });
         })();
+        setFavArr([...favArr, show.name]);
     };
 
-    const remove = (show) => {
-
-    }
+    const removeFromFavorites = (show) => {
+        const user = doc(db, "users", compareMail);
+        (async () => {
+            await updateDoc(user, {
+                favorites: arrayRemove(show),
+            });
+        })();
+        setFavArr(favArr.filter((el) => el !== show.name));
+    };
 
     const like = (show) => {
         if (!props.isLogin) {
             props.setModalVisible(true);
             return null;
         }
-        (async () => await setDoc(doc(db, "likedshows", show.name), {
-            name: show.name,
-            usermail: compareMail,
-            likes: 1
-        }))();
+        const likedShow = doc(db, "likedshows", show.name);
+        (async () => {
+            await updateDoc(likedShow, {
+                emails: arrayUnion(compareMail),
+                likes: increment(1),
+            });
+        })();
+        props.setLikedShows([...props.likedShows, show.name]);
     };
 
     const dislike = (show) => {
-        props.dislikeShow(show);
+        const likedShow = doc(db, "likedshows", show.name);
+        (async () => {
+            await updateDoc(likedShow, {
+                emails: arrayRemove(compareMail),
+                likes: increment(-1),
+            });
+        })();
+        props.setLikedShows(props.likedShows.filter((el) => el !== show.name));
     };
+
+    const reccomend = (show) => {
+        setShowForReccomend({
+            name: show.name,
+            averageRuntime: show.averageRuntime,
+            image: show.image,
+            email: compareMail,
+            rating: show.rating,
+            genres: show.genres,
+            id: show.id
+        });
+        setRecModalVisible(true);
+    };
+
+    const sendRecommend = (friend) => {
+        const user = doc(db, "users", friend.email);
+        (async () => {
+            console.log(showForReccomend);
+            await updateDoc(user, {
+                recs: arrayUnion(showForReccomend),
+            });
+        })();
+        setRecModalVisible(false);
+    }
 
     if (props.isLoading) {
         return <Loader />;
@@ -106,6 +154,13 @@ const Shows = (props) => {
                     <button className="button modal-button"> LOGIN </button>
                 </NavLink>
             </MyModal>
+            <RecModalPage 
+                visible={isRecModalVisible}
+                setVisible={setRecModalVisible}
+                friends={friendList}
+                sendRecommend={sendRecommend}
+            />
+
             <div className="shows-cont">
                 {props.shows.map((show) => {
                     return (
@@ -116,41 +171,50 @@ const Shows = (props) => {
                                 <p>Time: {show.averageRuntime}</p>
                                 <p>Genres: {show.genres.join(", ")}</p>
                                 <p>Rating: {show.rating.average}</p>
+                                <p>Likes: {show.likes}</p>
                             </NavLink>
                             <div className="buttons">
-                                {props.likedShows.includes(show) ? (
+                                {props.likedShows.includes(show.name) ? (
                                     <button
                                         className="button"
-                                        onClick={() => dislike(show)}
+                                        onClick={() => {
+                                            dislike(show);
+                                            show.likes--;
+                                        }}
                                     >
                                         Disike &#9829;
                                     </button>
                                 ) : (
                                     <button
                                         className="button"
-                                        onClick={() => like(show)}
+                                        onClick={() => {
+                                            like(show)
+                                            show.likes++;
+                                        }}
                                     >
                                         Like &#9825;
                                     </button>
                                 )}
                                 {favArr.includes(show.name) ? (
                                     <button
-                                    className="button"
-                                    onClick={() => addToFavs(show)}
-                                >
-                                    Remove from favorites
-                                </button>
+                                        className="button"
+                                        onClick={() =>
+                                            removeFromFavorites(show)
+                                        }
+                                    >
+                                        Remove from favorites
+                                    </button>
                                 ) : (
                                     <button
-                                    className="button"
-                                    onClick={() => addToFavs(show)}
-                                >
-                                    Add to favorites
+                                        className="button"
+                                        onClick={() => addToFavs(show)}
+                                    >
+                                        Add to favorites
+                                    </button>
+                                )}
+                                <button className='button' onClick={() => reccomend(show)}>
+                                    Reccomend to friend
                                 </button>
-                                )
-
-                                }
-
                             </div>
                         </div>
                     );

@@ -1,27 +1,25 @@
 import React from "react";
-import "./favorites.css";
+import "./recomendations.css";
 import { NavLink } from "react-router-dom";
 import ModalPage from "../../modal/modalPage";
 import { doc, getFirestore, getDocs, updateDoc, arrayRemove, collection } from "firebase/firestore";
 import { useState, useEffect } from "react/cjs/react.development";
 import { getAuth, onAuthStateChanged } from "@firebase/auth";
 
-const Favorites = (props) => {
-    const [favArr, setFavArr] = useState([]);
-    const [compareMail, setCompareMail] = useState('');
+const Recomendations = (props) => {
+    const [recsArr, setRecsArr] = useState([]);
     const db = getFirestore();
     const auth = getAuth();
 
     useEffect(() => {
         onAuthStateChanged(auth, (user) => {
-            setCompareMail(user.email);
             (async () => {
                 const querySnapshot = await getDocs(collection(db, "users"));
                 querySnapshot.forEach((doc) => {
                     if(doc.id === user.email) {
                         let arr = [];
-                        doc.data().favorites.forEach(fav => arr.push(fav));
-                        setFavArr([...arr]);
+                        doc.data().recs.forEach(rec => arr.push(rec));
+                        setRecsArr([...arr]);
                     }
                 });
             })();
@@ -37,33 +35,20 @@ const Favorites = (props) => {
         );
     }
 
-
-    const removeFromFavorites = (show) => {
-        const user = doc(db, "users", compareMail);
-        (async () => {
-            await updateDoc(user, {
-                favorites: arrayRemove(show),
-            });
-        })();
-        setFavArr(favArr.filter(el => el.name !== show.name));
-    }
-
-    if (favArr.length) {
+    if (recsArr.length) {
         return (
-            <div className="favorites">
-                {favArr.map((show) => {
+            <div className="recs">
+                {recsArr.map((show) => {
                     return (
-                        <div className="favShow" key={show.id}>
+                        <div className="recShow" key={show.id}>
                             <NavLink to={`shows/${show.id}`}>
                                 <h4>{show.name}</h4>
                                 <img src={show.image.medium} />
+                                <p>Time: {show.averageRuntime}</p>
+                                <p>Genres: {show.genres.join(", ")}</p>
+                                <p>Rating: {show.rating.average}</p>    
+                                <p>Recommended by: {show.email}</p>
                             </NavLink>
-                             <button
-                                className="button"
-                                onClick={() => removeFromFavorites(show)}
-                            >
-                                Remove from favorites
-                            </button> 
                         </div>
                     );
                 })}
@@ -71,7 +56,7 @@ const Favorites = (props) => {
         );
     } else {
         return (
-            <div className="favorites">
+            <div className="recs">
                 <h2>
                     No favorite shows yet. Please visit the SHOWS page to see
                     all shows:
@@ -84,4 +69,4 @@ const Favorites = (props) => {
     }
 };
 
-export default Favorites;
+export default Recomendations;

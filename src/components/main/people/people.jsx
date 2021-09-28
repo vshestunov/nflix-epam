@@ -2,24 +2,31 @@ import React, {useEffect} from "react";
 import { NavLink } from "react-router-dom";
 import ModalPage from "../../modal/modalPage";
 import "./people.css";
-import {
-    doc,
-    getFirestore,
-    updateDoc,
-    arrayUnion
-} from "firebase/firestore";
+import { doc, getFirestore, getDocs, updateDoc, arrayUnion, arrayRemove, collection } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { useState } from "react/cjs/react.development";
 
 const People = (props) => {
-    let compareMail = "";
+    const [compareMail, setCompareMail] = useState('');
     const db = getFirestore();
     const auth = getAuth();
+    const [friendList, setFriendList] = useState([]);
 
     useEffect(() => {
         onAuthStateChanged(auth, (user) => {
-            compareMail = user.email;
+            setCompareMail(user.email);
+            (async () => {
+                const querySnapshot = await getDocs(collection(db, "users"));
+                querySnapshot.forEach((doc) => {
+                    if(doc.id === user.email) {
+                        let arr = [];
+                        doc.data().friends.forEach(man => arr.push(man.name));
+                        setFriendList([...arr]);
+                    }
+                });
+            })();
         });
-    }, [auth]);
+    }, [auth, db]);
 
     if (!props.isLogin) {
         return (
@@ -37,7 +44,18 @@ const People = (props) => {
                 friends: arrayUnion(man),
             });
         })();
+        setFriendList([...friendList, man.name]);
     };
+
+    const removeFromFriends = (man) => {
+        const user = doc(db, "users", compareMail);
+        (async () => {
+            await updateDoc(user, {
+                friends: arrayRemove(man),
+            });
+        })();
+        setFriendList(friendList.filter(el => el !== man.name));
+    }
 
     return (
         <div className="people">
@@ -49,12 +67,23 @@ const People = (props) => {
                             <img src={man.photo} />
                             <p>Email: {man.email}</p>
                         </NavLink>
-                            <button
-                                className="button"
-                                onClick={() => addFriend(man)}
-                            >
-                                Add to friends
-                            </button>
+                        {friendList.includes(man.name) ? (
+                                    <button
+                                    className="button"
+                                    onClick={() => removeFromFriends(man)}
+                                >
+                                    Remove from friends
+                                </button>
+                                ) : (
+                                    <button
+                                    className="button"
+                                    onClick={() => addFriend(man)}
+                                >
+                                    Add to Friends
+                                </button>
+                                )
+
+                                }
                     </div>
                 );
             })}

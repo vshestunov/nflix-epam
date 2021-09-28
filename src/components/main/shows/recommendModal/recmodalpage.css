@@ -1,0 +1,14 @@
+.modal-friends {
+    max-width: 800px;
+    display: flex;
+    justify-content: center;
+}
+
+.modal-friend {
+    border: 2px solid blue;
+    margin: 0 10px;
+}
+
+.rec-modal-photo {
+    max-width: 200px;
+}
