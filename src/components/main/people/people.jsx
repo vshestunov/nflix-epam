@@ -1,10 +1,8 @@
-import React, {useEffect} from "react";
-import { NavLink } from "react-router-dom";
+import React, {useEffect, useState} from "react";
 import ModalPage from "../../modal/modalPage";
 import "./people.css";
 import { doc, getFirestore, getDocs, updateDoc, arrayUnion, arrayRemove, collection } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { useState } from "react/cjs/react.development";
 
 const People = (props) => {
     const [compareMail, setCompareMail] = useState('');

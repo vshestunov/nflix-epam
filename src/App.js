@@ -5,7 +5,7 @@ import Header from "./components/header/header";
 import Footer from "./components/footer/footer";
 import { BrowserRouter } from "react-router-dom";
 import axios from "axios";
-import { getFirestore, collection, getDocs, setDoc, doc } from "firebase/firestore";
+import { getFirestore, collection, getDocs } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 function App() {
@@ -66,8 +66,10 @@ function App() {
                         let namesArr = [];
                         querySnapshot.forEach((doc) => {
                             dataAarr.push(doc.data());
-                            if(doc.data().emails.includes(user.email)) {
-                                namesArr.push(doc.id);
+                            if(user) {
+                                if(doc.data().emails.includes(user.email)) {
+                                    namesArr.push(doc.id);
+                                }
                             }
                         });
                         setShows([...dataAarr]);

@@ -25,3 +25,11 @@
 .features-cont a:hover {
     color: white;
 }
+
+.features-cont ul {
+    text-align: left;
+}
+
+.features-cont li {
+    list-style: none;
+}

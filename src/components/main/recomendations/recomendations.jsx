@@ -1,16 +1,12 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./recomendations.css";
 import { NavLink } from "react-router-dom";
 import ModalPage from "../../modal/modalPage";
 import {
-    doc,
     getFirestore,
     getDocs,
-    updateDoc,
-    arrayRemove,
     collection,
 } from "firebase/firestore";
-import { useState, useEffect } from "react/cjs/react.development";
 import { getAuth, onAuthStateChanged } from "@firebase/auth";
 
 const Recommendations = (props) => {
@@ -59,7 +55,6 @@ const Recommendations = (props) => {
                                 <img src={show.image.medium} />
                                 <div className="rec-show-description-cont">
                                     <p>Time: {show.averageRuntime}</p>
-                                    <p>Genres: {show.genres.join(", ")}</p>
                                     <p>Rating: {show.rating.average}</p>
                                     <p>Recommended by: {show.email}</p>
                                 </div>

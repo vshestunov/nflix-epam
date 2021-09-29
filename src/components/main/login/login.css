@@ -5,7 +5,7 @@
     justify-self: center;
     justify-content: center;
     margin: 0 auto;
-    height: 50vh;
+    min-height: 70vh;
     align-items: center;
 }
 
@@ -14,18 +14,19 @@
 }
 
 .login-form input {
-    width: 100%;
+    width: 80%;
     height: 20px;
     background-color: white;
     border-radius: 5px;
+    margin: 10px 0;
 }
 
 .login-form {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    align-items: space-evenly;
-    height: 45vh;
+    justify-content: center;
+    align-items: center;
+    min-height: 45vh;
 }
 
 .button:hover {
@@ -38,7 +39,6 @@
 
 .span-link {
     color: blue;
-    text-decoration: underline;
     cursor: pointer;
 }
 

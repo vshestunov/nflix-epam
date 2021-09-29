@@ -39,3 +39,14 @@
 .info-cont .button {
     margin: 10px 0;
 }
+
+@media screen and (max-width: 768px) {
+    .profile {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .info-cont {
+        align-items: center;
+    }
+}

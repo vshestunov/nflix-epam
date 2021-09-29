@@ -14,7 +14,7 @@ const RecModalPage = (props) => {
                         <div className="modal-friends">
                             {props.friends.map((friend) => {
                                 return (
-                                    <div className="modal-friend">
+                                    <div className="modal-friend" key={friend.name}>
                                         <img
                                             className="rec-modal-photo"
                                             src={friend.photo}

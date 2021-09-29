@@ -5,7 +5,7 @@ import {
     getAuth,
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
-    updateProfile
+    updateProfile,
 } from "firebase/auth";
 import { useHistory } from "react-router";
 import { getFirestore, doc, setDoc } from "firebase/firestore";
@@ -45,15 +45,17 @@ const Login = (props) => {
                             console.log(error.code);
                         });
                     try {
-                        (async () => await setDoc(doc(db, "users", name), {
-                            name: inputName,
-                            email: name,
-                            id: new Date(),
-                            favorites: [],
-                            friends: [],
-                            recs: [],
-                            photoURL: 'https://media.istockphoto.com/photos/businessman-silhouette-as-avatar-or-default-profile-picture-picture-id476085198?s=612x612',
-                        }))();
+                        (async () =>
+                            await setDoc(doc(db, "users", name), {
+                                name: inputName,
+                                email: name,
+                                id: new Date(),
+                                favorites: [],
+                                friends: [],
+                                recs: [],
+                                photoURL:
+                                    "https://media.istockphoto.com/photos/businessman-silhouette-as-avatar-or-default-profile-picture-picture-id476085198?s=612x612",
+                            }))();
                     } catch (e) {
                         console.error("Error adding document: ", e);
                     }
@@ -71,9 +73,6 @@ const Login = (props) => {
                     }
                     setPassword("");
                     setUsetName("");
-                    console.log(
-                        `Code: ${error.code}, Message: ${error.Message}`
-                    );
                 });
         }
     };
@@ -108,31 +107,33 @@ const Login = (props) => {
     return (
         <div className="login">
             {hasAccount ? (
-                <form className="login-form">
-                    <h2>Please type in your credentials to Log In</h2>
-                    <span>Username</span>
-                    <input
-                        type="text"
-                        value={userName}
-                        placeholder='Your username'
-                        onChange={(e) => setUsetName(e.target.value)}
-                        required={true}
-                    />
-                    <span>Password</span>
-                    <input
-                        type="password"
-                        value={password}
-                        placeholder='Your password'
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                    />
-                    <button
-                        type="button"
-                        className="button"
-                        onClick={() => login(auth, userName, password)}
-                    >
-                        LOG IN
-                    </button>
+                <div>
+                    <form className="login-form">
+                        <h2>Please type in your credentials to Log In</h2>
+                        <span>Username</span>
+                        <input
+                            type="text"
+                            value={userName}
+                            placeholder="Your username"
+                            onChange={(e) => setUsetName(e.target.value)}
+                            required={true}
+                        />
+                        <span>Password</span>
+                        <input
+                            type="password"
+                            value={password}
+                            placeholder="Your password"
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
+                        <button
+                            type="submit"
+                            className="button"
+                            onClick={(e) => {e.preventDefault(); login(auth, userName, password)}}
+                        >
+                            LOG IN
+                        </button>
+                    </form>
                     <div>
                         Do not have an account yet? Please click{" "}
                         <span
@@ -143,43 +144,46 @@ const Login = (props) => {
                         </span>{" "}
                         to Sign Up!
                     </div>
-                </form>
+                </div>
             ) : (
-                <form className="login-form">
-                    <h2>
-                        Please provide your credentials to register an account
-                    </h2>
-                    <span>Username</span>
-                    <input
-                        type="text"
-                        value={userName}
-                        placeholder='Username'
-                        onChange={(e) => setUsetName(e.target.value)}
-                        required
-                    />
-                    <span>Password</span>
-                    <input
-                        type="password"
-                        value={password}
-                        placeholder='Password'
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                    />
-                    <span>Full Name</span>
-                    <input
-                        type="text"
-                        value={inputName}
-                        placeholder='Full Name'
-                        onChange={(e) => setInputName(e.target.value)}
-                        required
-                    />
-                    <button
-                        type="button"
-                        className="button"
-                        onClick={() => register(auth, userName, password)}
-                    >
-                        Sign Up
-                    </button>
+                <div>
+                    <form className="login-form">
+                        <h2>
+                            Please provide your credentials to register an
+                            account
+                        </h2>
+                        <span>Username</span>
+                        <input
+                            type="text"
+                            value={userName}
+                            placeholder="Username"
+                            onChange={(e) => setUsetName(e.target.value)}
+                            required
+                        />
+                        <span>Password</span>
+                        <input
+                            type="password"
+                            value={password}
+                            placeholder="Password"
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
+                        <span>Full Name</span>
+                        <input
+                            type="text"
+                            value={inputName}
+                            placeholder="Full Name"
+                            onChange={(e) => setInputName(e.target.value)}
+                            required
+                        />
+                        <button
+                            type="submit"
+                            className="button"
+                            onClick={(e) => {e.preventDefault(); register(auth, userName, password)}}
+                        >
+                            Sign Up
+                        </button>
+                    </form>
                     <div>
                         Already have an account? Please click{" "}
                         <span
@@ -190,7 +194,7 @@ const Login = (props) => {
                         </span>{" "}
                         to Log in!
                     </div>
-                </form>
+                </div>
             )}
         </div>
     );

@@ -1,10 +1,9 @@
-import React from "react";
+import React, {useState} from "react";
 import "./profile.css";
 import { NavLink } from "react-router-dom";
 import Loader from "../../loader/loader";
 import { useHistory } from "react-router";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { useState } from "react/cjs/react.development";
 
 const Profile = (props) => {
     const auth = getAuth();

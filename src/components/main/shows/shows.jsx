@@ -202,7 +202,6 @@ const Shows = (props) => {
                                 <img src={show.image.medium} />
                                 <div className="show-description-cont">
                                     <p>Time: {show.averageRuntime}</p>
-                                    <p>Genres: {show.genres.join(", ")}</p>
                                     <p>Rating: {show.rating.average}</p>
                                     <p>Likes: {show.likes}</p>
                                 </div>

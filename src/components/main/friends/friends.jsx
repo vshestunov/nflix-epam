@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./friends.css";
 import { NavLink } from "react-router-dom";
 import ModalPage from "../../modal/modalPage";
@@ -10,7 +10,6 @@ import {
     arrayRemove,
     collection,
 } from "firebase/firestore";
-import { useState, useEffect } from "react/cjs/react.development";
 import { getAuth, onAuthStateChanged } from "@firebase/auth";
 
 const Friends = (props) => {
