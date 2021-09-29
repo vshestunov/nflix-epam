@@ -1,1 +1,22 @@
+.button {
+    background-color: rgb(35,31,32);
+    color: white;
+    border: none;
+    box-sizing: border-box;
+    font-weight: bold;
+    font-size: 12px;
+    min-width: 90px;
+    max-width: 90px;
+    margin: 0 5px;
+    height: 40px;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;    
+}
 
+
+.button:hover {
+    color: rgb(118,205,216);
+}

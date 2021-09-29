@@ -1,5 +1,4 @@
 .people {
-    color: red;
     width: 100%;
     display: flex;
     flex-wrap: wrap;
@@ -8,15 +7,9 @@
 }
 
 .man {
-    min-width: 400px;
-    min-height: 400px;
-    border: 2px solid teal;
-    color: black;
-    font-size: 20px;
-    margin: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    min-width: 300px;
+    border: 2px solid rgb(35,31,32);
+    margin: 10px;
 }
 
 .man a {
@@ -24,12 +17,27 @@
     text-decoration: none;
 }
 
-.man a:hover {
-    color: gold;
+.people-button-cont {
+    display: flex;
+    justify-content: space-evenly;
+    padding: 10px 0;
+    align-items: center;
+    align-content: center;
+    background-color: rgb(118,205,216);
 }
 
-.button .modal-button {
+.man .button {
     margin: 0 auto;
+}
+
+.man h4 {
+    background-color: rgb(118,205,216);
+    margin: 0;
+}
+
+.man p {
+    background-color: rgb(118,205,216);
+    margin: 0;
 }
 
 .man img {

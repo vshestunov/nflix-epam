@@ -5,25 +5,43 @@
     justify-content: center;
 }
 
+.recs-empty {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
 .recShow {
-    width: 150px;
-    border: 2px solid teal;
+    width: 300px;
+    border: 2px solid rgb(35,31,32);
     margin: 10px;
+}
+
+.rec-show-description-cont {
+    background-color: rgb(118,205,216);
 }
 
 .recShow h4 {
     font-size: 20px;
+    background-color: rgb(118,205,216);
+    margin: 0;
 }
 
 .recShow img {
-    width: 100px;
+    width: 200px;
 }
 
 .recShow a {
     text-decoration: none;
-    color: teal;
+    color: rgb(35,31,32);
 }
 
 .recs a {
     text-decoration: none;
+}
+
+.recs p {
+    margin: 0;
 }

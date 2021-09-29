@@ -14,17 +14,21 @@ const People = (props) => {
 
     useEffect(() => {
         onAuthStateChanged(auth, (user) => {
-            setCompareMail(user.email);
-            (async () => {
-                const querySnapshot = await getDocs(collection(db, "users"));
-                querySnapshot.forEach((doc) => {
-                    if(doc.id === user.email) {
-                        let arr = [];
-                        doc.data().friends.forEach(man => arr.push(man.name));
-                        setFriendList([...arr]);
-                    }
-                });
-            })();
+            try {
+                setCompareMail(user.email);
+                (async () => {
+                    const querySnapshot = await getDocs(collection(db, "users"));
+                    querySnapshot.forEach((doc) => {
+                        if(doc.id === user.email) {
+                            let arr = [];
+                            doc.data().friends.forEach(man => arr.push(man.name));
+                            setFriendList([...arr]);
+                        }
+                    });
+                })();
+            } catch(e) {
+                console.log(e);
+            }
         });
     }, [auth, db]);
 
@@ -39,22 +43,30 @@ const People = (props) => {
 
     const addFriend = (man) => {
         const user = doc(db, "users", compareMail);
-        (async () => {
-            await updateDoc(user, {
-                friends: arrayUnion(man),
-            });
-        })();
-        setFriendList([...friendList, man.name]);
+        try {
+            (async () => {
+                await updateDoc(user, {
+                    friends: arrayUnion(man),
+                });
+            })();
+            setFriendList([...friendList, man.name]);
+        } catch(e) {
+            console.log(e);
+        }
     };
 
     const removeFromFriends = (man) => {
         const user = doc(db, "users", compareMail);
-        (async () => {
-            await updateDoc(user, {
-                friends: arrayRemove(man),
-            });
-        })();
-        setFriendList(friendList.filter(el => el !== man.name));
+        try {
+            (async () => {
+                await updateDoc(user, {
+                    friends: arrayRemove(man),
+                });
+            })();
+            setFriendList(friendList.filter(el => el !== man.name));
+        } catch(e) {
+            console.log(e);
+        }
     }
 
     return (
@@ -62,11 +74,10 @@ const People = (props) => {
             {props.peopleList.map((man) => {
                 return (
                     <div className="man" key={man.id}>
-                        <NavLink to={`/people/${man.id}`}>
                             <h4>Name: {man.name}</h4>
                             <img src={man.photo} />
                             <p>Email: {man.email}</p>
-                        </NavLink>
+                        <div className="people-button-cont">
                         {friendList.includes(man.name) ? (
                                     <button
                                     className="button"
@@ -84,6 +95,7 @@ const People = (props) => {
                                 )
 
                                 }
+                        </div>
                     </div>
                 );
             })}

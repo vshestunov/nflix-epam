@@ -14,17 +14,21 @@ const Favorites = (props) => {
 
     useEffect(() => {
         onAuthStateChanged(auth, (user) => {
-            setCompareMail(user.email);
-            (async () => {
-                const querySnapshot = await getDocs(collection(db, "users"));
-                querySnapshot.forEach((doc) => {
-                    if(doc.id === user.email) {
-                        let arr = [];
-                        doc.data().favorites.forEach(fav => arr.push(fav));
-                        setFavArr([...arr]);
-                    }
-                });
-            })();
+            try {
+                setCompareMail(user.email);
+                (async () => {
+                    const querySnapshot = await getDocs(collection(db, "users"));
+                    querySnapshot.forEach((doc) => {
+                        if(doc.id === user.email) {
+                            let arr = [];
+                            doc.data().favorites.forEach(fav => arr.push(fav));
+                            setFavArr([...arr]);
+                        }
+                    });
+                })();
+            } catch(e) {
+                console.log(e);
+            }
           });
     }, [auth, db]);
 
@@ -40,12 +44,16 @@ const Favorites = (props) => {
 
     const removeFromFavorites = (show) => {
         const user = doc(db, "users", compareMail);
-        (async () => {
-            await updateDoc(user, {
-                favorites: arrayRemove(show),
-            });
-        })();
-        setFavArr(favArr.filter(el => el.name !== show.name));
+        try {
+            (async () => {
+                await updateDoc(user, {
+                    favorites: arrayRemove(show),
+                });
+            })();
+            setFavArr(favArr.filter(el => el.name !== show.name));
+        } catch(e) {
+            console.log(e);
+        }
     }
 
     if (favArr.length) {
@@ -57,13 +65,21 @@ const Favorites = (props) => {
                             <NavLink to={`shows/${show.id}`}>
                                 <h4>{show.name}</h4>
                                 <img src={show.image.medium} />
+                                <div className="fav-show-description-cont">
+                                    <p>Time: {show.averageRuntime}</p>
+                                    <p>Genres: {show.genres.join(", ")}</p>
+                                    <p>Rating: {show.rating.average}</p>
+                                    <p>Likes: {show.likes}</p>
+                                </div>
                             </NavLink>
-                             <button
+                            <div className="fav-button-cont">
+                            <button
                                 className="button"
                                 onClick={() => removeFromFavorites(show)}
                             >
                                 Remove from favorites
                             </button> 
+                            </div>
                         </div>
                     );
                 })}
@@ -71,7 +87,7 @@ const Favorites = (props) => {
         );
     } else {
         return (
-            <div className="favorites">
+            <div className="favorites-empty">
                 <h2>
                     No favorite shows yet. Please visit the SHOWS page to see
                     all shows:

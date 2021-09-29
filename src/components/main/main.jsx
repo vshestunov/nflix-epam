@@ -9,7 +9,7 @@ import Shows from "./shows/shows";
 import "./main.css";
 import Show from "./shows/show";
 import Login from "./login/login";
-import Recomendations from "./recomendations/recomendations";
+import Recommendations from "./recomendations/recomendations";
 
 const Main = (props) => {
     
@@ -76,9 +76,9 @@ const Main = (props) => {
                 />
                 <Route
                     exact
-                    path="/recomendations"
+                    path="/recommendations"
                     render={() => (
-                        <Recomendations
+                        <Recommendations
                             isLogin={props.isLogin}
                             isModalVisible={props.isModalVisible}
                             setModalVisible={props.setModalVisible}

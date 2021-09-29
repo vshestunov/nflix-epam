@@ -27,9 +27,11 @@ const Show = (props) => {
             <div className="show-page">
                 <h3>{show.name}</h3>
                 <img src={show.image.original} />
-                <p>Language: {show.language}</p>
-                <p>Rating: {show.rating.average}</p>
-                <p>Genres: {show.genres.join(", ")}</p>
+                <div className='show-description-cont'>
+                    <p>Language: {show.language}</p>
+                    <p>Rating: {show.rating.average}</p>
+                    <p>Genres: {show.genres.join(", ")}</p>
+                </div>
             </div>
         );
     } else {

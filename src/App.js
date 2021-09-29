@@ -26,44 +26,56 @@ function App() {
     useEffect(() => {
         onAuthStateChanged(auth, (user) => {
             if(user) {
-                (async () => {
-                    const querySnapshot = await getDocs(collection(db, "users"));
-                    let arr = [];
-                    querySnapshot.forEach((doc) => {
-                        if(doc.data().email !== user.email) {
-                            arr.push({
-                                id: doc.id,
-                                name: doc.data().name,
-                                email: doc.data().email,
-                                photo: doc.data().photoURL
-                            })
-                        }
-                    });
-                    setPeopleList([...peopleList, ...arr]);
-                })();
+                try {
+                    (async () => {
+                        const querySnapshot = await getDocs(collection(db, "users"));
+                        let arr = [];
+                        querySnapshot.forEach((doc) => {
+                            if(doc.data().email !== user.email) {
+                                arr.push({
+                                    id: doc.id,
+                                    name: doc.data().name,
+                                    email: doc.data().email,
+                                    photo: doc.data().photoURL
+                                })
+                            }
+                        });
+                        setPeopleList([...peopleList, ...arr]);
+                    })();
+                } catch(e) {
+                    console.log(e);
+                }
             }
           });
     }, [auth]);
 
     useEffect(async function() {
         if(!auth) {
-            const response = await axios.get("https://api.tvmaze.com/shows");
-            setShows(response.data);
+            try {
+                const response = await axios.get("https://api.tvmaze.com/shows");
+                setShows(response.data);
+            } catch(e) {
+                console.log(e);
+            }
         } else {
             onAuthStateChanged(auth, (user) => {
-                (async () => {
-                    const querySnapshot = await getDocs(collection(db, "likedshows"));
-                    let dataAarr = [];
-                    let namesArr = [];
-                    querySnapshot.forEach((doc) => {
-                        dataAarr.push(doc.data());
-                        if(doc.data().emails.includes(user.email)) {
-                            namesArr.push(doc.id);
-                        }
-                    });
-                    setShows([...dataAarr]);
-                    setLikedShows([...namesArr]);
-                })();
+                try {
+                    (async () => {
+                        const querySnapshot = await getDocs(collection(db, "likedshows"));
+                        let dataAarr = [];
+                        let namesArr = [];
+                        querySnapshot.forEach((doc) => {
+                            dataAarr.push(doc.data());
+                            if(doc.data().emails.includes(user.email)) {
+                                namesArr.push(doc.id);
+                            }
+                        });
+                        setShows([...dataAarr]);
+                        setLikedShows([...namesArr]);
+                    })();
+                } catch(e) {
+                    console.log(e);
+                }
             });
         }
     }, [db, auth]);

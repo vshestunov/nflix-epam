@@ -1,6 +1,6 @@
 .header {
     height: 10vh;
-    background-color: blue;
+    background-color: rgb(35,31,32);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -16,9 +16,9 @@
 }
 
 .header-link:hover {
-    color: gold;
+    color: rgb(118,205,216);
 }
 
 .header-link.active {
-    color: gold;
+    color: rgb(118,205,216);
 }

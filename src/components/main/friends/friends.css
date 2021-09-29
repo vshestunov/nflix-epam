@@ -5,6 +5,44 @@
     justify-content: center;
 }
 
+.friends-empty {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+.friend {
+    width: 400px;
+    border: 2px solid rgb(35,31,32);
+    margin: 10px;
+}
+
+.friend img {
+    width: 300px;
+}
+
 .friends a {
     text-decoration: none;
+    color: rgb(35,31,32);;
+}
+
+.friend h4 {
+    background-color: rgb(118,205,216);
+    margin: 0;
+}
+
+.friend p {
+    background-color: rgb(118,205,216);
+    margin: 0;
+}
+
+.friend-button-cont {
+    display: flex;
+    justify-content: space-evenly;
+    padding: 10px 0;
+    align-items: center;
+    align-content: center;
+    background-color: rgb(118,205,216);
 }

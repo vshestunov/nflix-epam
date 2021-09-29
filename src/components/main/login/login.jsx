@@ -32,7 +32,6 @@ const Login = (props) => {
             createUserWithEmailAndPassword(auth, name, pass)
                 .then((userCredential) => {
                     props.setIsLogin(true);
-                    console.log(userCredential.user);
                     login(auth, userName, password);
                     updateProfile(userCredential.user, {
                         displayName: inputName,
@@ -115,6 +114,7 @@ const Login = (props) => {
                     <input
                         type="text"
                         value={userName}
+                        placeholder='Your username'
                         onChange={(e) => setUsetName(e.target.value)}
                         required={true}
                     />
@@ -122,6 +122,7 @@ const Login = (props) => {
                     <input
                         type="password"
                         value={password}
+                        placeholder='Your password'
                         onChange={(e) => setPassword(e.target.value)}
                         required
                     />
@@ -152,6 +153,7 @@ const Login = (props) => {
                     <input
                         type="text"
                         value={userName}
+                        placeholder='Username'
                         onChange={(e) => setUsetName(e.target.value)}
                         required
                     />
@@ -159,6 +161,7 @@ const Login = (props) => {
                     <input
                         type="password"
                         value={password}
+                        placeholder='Password'
                         onChange={(e) => setPassword(e.target.value)}
                         required
                     />
@@ -166,6 +169,7 @@ const Login = (props) => {
                     <input
                         type="text"
                         value={inputName}
+                        placeholder='Full Name'
                         onChange={(e) => setInputName(e.target.value)}
                         required
                     />

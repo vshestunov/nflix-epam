@@ -1,3 +1,27 @@
 .home {
-    color: yellow;
+    width: 90%;
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 auto;
+    justify-content: center;
+}
+
+.headers-cont {
+    width: 100%;
+}
+
+.features-cont {
+    border: rgb(35,31,32);
+    background-color: rgb(118,205,216);;
+    width: 400px;
+    margin: 10px;
+}
+
+.features-cont a {
+    color: blue;
+    text-decoration: none;
+}
+
+.features-cont a:hover {
+    color: white;
 }

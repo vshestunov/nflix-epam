@@ -1,7 +1,8 @@
 .footer {
     height: 10vh;
-    background-color: blueviolet;
+    background-color: rgb(35,31,32);
     display: flex;
     align-items: center;
     justify-content: center;
+    color: white;
 }

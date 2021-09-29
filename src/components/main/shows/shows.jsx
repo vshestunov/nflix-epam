@@ -25,24 +25,34 @@ const Shows = (props) => {
     const auth = getAuth();
     const [favArr, setFavArr] = useState([]);
     const [isRecModalVisible, setRecModalVisible] = useState(false);
-    let [showForReccomend, setShowForReccomend ]= useState('');
+    let [showForReccomend, setShowForReccomend] = useState("");
 
     useEffect(() => {
         onAuthStateChanged(auth, (user) => {
             setCompareMail(user.email);
-            (async () => {
-                const querySnapshot = await getDocs(collection(db, "users"));
-                querySnapshot.forEach((doc) => {
-                    if (doc.id === user.email) {
-                        let arr = [];
-                        let friendsArr = [];
-                        doc.data().favorites.forEach((fav) => arr.push(fav.name));
-                        doc.data().friends.forEach(man => friendsArr.push(man));
-                        setFavArr([...arr]);
-                        setFriendList([...friendsArr]);
-                    }
-                });
-            })();
+            try {
+                (async () => {
+                    const querySnapshot = await getDocs(
+                        collection(db, "users")
+                    );
+                    querySnapshot.forEach((doc) => {
+                        if (doc.id === user.email) {
+                            let arr = [];
+                            let friendsArr = [];
+                            doc.data().favorites.forEach((fav) =>
+                                arr.push(fav.name)
+                            );
+                            doc.data().friends.forEach((man) =>
+                                friendsArr.push(man)
+                            );
+                            setFavArr([...arr]);
+                            setFriendList([...friendsArr]);
+                        }
+                    });
+                })();
+            } catch (e) {
+                console.log(e);
+            }
         });
     }, [auth, db]);
 
@@ -67,22 +77,30 @@ const Shows = (props) => {
             return null;
         }
         const user = doc(db, "users", compareMail);
-        (async () => {
-            await updateDoc(user, {
-                favorites: arrayUnion(show),
-            });
-        })();
-        setFavArr([...favArr, show.name]);
+        try {
+            (async () => {
+                await updateDoc(user, {
+                    favorites: arrayUnion(show),
+                });
+            })();
+            setFavArr([...favArr, show.name]);
+        } catch (e) {
+            console.log(e);
+        }
     };
 
     const removeFromFavorites = (show) => {
         const user = doc(db, "users", compareMail);
-        (async () => {
-            await updateDoc(user, {
-                favorites: arrayRemove(show),
-            });
-        })();
-        setFavArr(favArr.filter((el) => el !== show.name));
+        try {
+            (async () => {
+                await updateDoc(user, {
+                    favorites: arrayRemove(show),
+                });
+            })();
+            setFavArr(favArr.filter((el) => el !== show.name));
+        } catch (e) {
+            console.log(e);
+        }
     };
 
     const like = (show) => {
@@ -91,24 +109,34 @@ const Shows = (props) => {
             return null;
         }
         const likedShow = doc(db, "likedshows", show.name);
-        (async () => {
-            await updateDoc(likedShow, {
-                emails: arrayUnion(compareMail),
-                likes: increment(1),
-            });
-        })();
-        props.setLikedShows([...props.likedShows, show.name]);
+        try {
+            (async () => {
+                await updateDoc(likedShow, {
+                    emails: arrayUnion(compareMail),
+                    likes: increment(1),
+                });
+            })();
+            props.setLikedShows([...props.likedShows, show.name]);
+        } catch (e) {
+            console.log(e);
+        }
     };
 
     const dislike = (show) => {
         const likedShow = doc(db, "likedshows", show.name);
-        (async () => {
-            await updateDoc(likedShow, {
-                emails: arrayRemove(compareMail),
-                likes: increment(-1),
-            });
-        })();
-        props.setLikedShows(props.likedShows.filter((el) => el !== show.name));
+        try {
+            (async () => {
+                await updateDoc(likedShow, {
+                    emails: arrayRemove(compareMail),
+                    likes: increment(-1),
+                });
+            })();
+            props.setLikedShows(
+                props.likedShows.filter((el) => el !== show.name)
+            );
+        } catch (e) {
+            console.log(e);
+        }
     };
 
     const reccomend = (show) => {
@@ -119,21 +147,25 @@ const Shows = (props) => {
             email: compareMail,
             rating: show.rating,
             genres: show.genres,
-            id: show.id
+            id: show.id,
         });
         setRecModalVisible(true);
     };
 
     const sendRecommend = (friend) => {
         const user = doc(db, "users", friend.email);
-        (async () => {
-            console.log(showForReccomend);
-            await updateDoc(user, {
-                recs: arrayUnion(showForReccomend),
-            });
-        })();
-        setRecModalVisible(false);
-    }
+        try {
+            (async () => {
+                console.log(showForReccomend);
+                await updateDoc(user, {
+                    recs: arrayUnion(showForReccomend),
+                });
+            })();
+            setRecModalVisible(false);
+        } catch (e) {
+            console.log(e);
+        }
+    };
 
     if (props.isLoading) {
         return <Loader />;
@@ -154,7 +186,7 @@ const Shows = (props) => {
                     <button className="button modal-button"> LOGIN </button>
                 </NavLink>
             </MyModal>
-            <RecModalPage 
+            <RecModalPage
                 visible={isRecModalVisible}
                 setVisible={setRecModalVisible}
                 friends={friendList}
@@ -168,15 +200,17 @@ const Shows = (props) => {
                             <NavLink to={`shows/${show.id}`}>
                                 <h4>{show.name}</h4>
                                 <img src={show.image.medium} />
-                                <p>Time: {show.averageRuntime}</p>
-                                <p>Genres: {show.genres.join(", ")}</p>
-                                <p>Rating: {show.rating.average}</p>
-                                <p>Likes: {show.likes}</p>
+                                <div className="show-description-cont">
+                                    <p>Time: {show.averageRuntime}</p>
+                                    <p>Genres: {show.genres.join(", ")}</p>
+                                    <p>Rating: {show.rating.average}</p>
+                                    <p>Likes: {show.likes}</p>
+                                </div>
                             </NavLink>
-                            <div className="buttons">
+                            <div className="shows-buttons">
                                 {props.likedShows.includes(show.name) ? (
                                     <button
-                                        className="button"
+                                        className="button shows-button"
                                         onClick={() => {
                                             dislike(show);
                                             show.likes--;
@@ -186,9 +220,9 @@ const Shows = (props) => {
                                     </button>
                                 ) : (
                                     <button
-                                        className="button"
+                                        className="button shows-button"
                                         onClick={() => {
-                                            like(show)
+                                            like(show);
                                             show.likes++;
                                         }}
                                     >
@@ -197,7 +231,7 @@ const Shows = (props) => {
                                 )}
                                 {favArr.includes(show.name) ? (
                                     <button
-                                        className="button"
+                                        className="button shows-button"
                                         onClick={() =>
                                             removeFromFavorites(show)
                                         }
@@ -206,13 +240,16 @@ const Shows = (props) => {
                                     </button>
                                 ) : (
                                     <button
-                                        className="button"
+                                        className="button shows-button"
                                         onClick={() => addToFavs(show)}
                                     >
                                         Add to favorites
                                     </button>
                                 )}
-                                <button className='button' onClick={() => reccomend(show)}>
+                                <button
+                                    className="button shows-button"
+                                    onClick={() => reccomend(show)}
+                                >
                                     Reccomend to friend
                                 </button>
                             </div>
