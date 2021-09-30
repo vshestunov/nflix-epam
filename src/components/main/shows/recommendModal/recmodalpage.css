@@ -1,14 +1,33 @@
 .modal-friends {
-    max-width: 800px;
+    width: 100%;
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
+}
+
+.modal-cont {
+    max-width: 100%;
+}
+
+.modal-cont h2 {
+    font-size: 14px;
 }
 
 .modal-friend {
     border: 2px solid blue;
     margin: 0 10px;
+    font-size: 10px;
 }
 
 .rec-modal-photo {
-    max-width: 200px;
+    max-width: 50px;
+}
+.modal-friend {
+        width: 100px;
+        border: 2px solid rgb(35,31,32);
+        margin: 10px;
+}
+
+.modal-friend img {
+    width: 200px;
 }

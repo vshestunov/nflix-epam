@@ -34,7 +34,7 @@ const Profile = (props) => {
                 <img src={photo} alt="photo" />
             </div>
             <div className="info-cont">
-                <h2>User Name: {name}</h2>
+                <h2>Name: {name}</h2>
                 <p>e-mail: {mail}</p>
                 <NavLink to="/login">
                     <button className="button" onClick={() => props.setIsLogin(false)}>

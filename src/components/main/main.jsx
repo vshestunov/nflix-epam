@@ -21,6 +21,7 @@ const Main = (props) => {
                     path="/shows"
                     render={() => (
                         <Shows
+                            getMoreShows={props.getMoreShows}
                             shows={props.shows}
                             likedShows={props.likedShows}
                             setLikedShows={props.setLikedShows}

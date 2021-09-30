@@ -67,6 +67,14 @@
     margin: 0;
 }
 
+.show .likes-and-rat {
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-evenly;
+    padding-top: 10px;
+}
+
 .show a {
     text-decoration: none;
     color: rgb(35,31,32);
@@ -104,4 +112,8 @@
     align-items: center;
     align-content: center;
     background-color: rgb(118,205,216);
+}
+
+.get-shows-button {
+    margin: 15px auto;
 }

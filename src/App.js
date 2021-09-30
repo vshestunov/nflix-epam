@@ -11,7 +11,6 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 function App() {
     const [shows, setShows] = useState([]);
     const [genres, setGenres] = useState([]);
-    const [likedShows, setLikedShows] = useState([]);
     const [peopleList, setPeopleList] = useState([]);
     const [isLogin, setIsLogin] = useState(false);
     const [isModalVisible, setModalVisible] = useState(true);
@@ -19,6 +18,7 @@ function App() {
     let [sortMehod, setSortMethod] = useState("");
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedFilter, setSelectedFilter] = useState("");
+    let [pageCounter, setPageCounter] = useState(0);
     const db = getFirestore();
 
 
@@ -50,37 +50,23 @@ function App() {
     }, [auth]);
 
     useEffect(async function() {
-        if(!auth) {
-            try {
-                const response = await axios.get("https://api.tvmaze.com/shows");
-                setShows(response.data);
-            } catch(e) {
-                console.log(e);
-            }
-        } else {
-            onAuthStateChanged(auth, (user) => {
-                try {
-                    (async () => {
-                        const querySnapshot = await getDocs(collection(db, "likedshows"));
-                        let dataAarr = [];
-                        let namesArr = [];
-                        querySnapshot.forEach((doc) => {
-                            dataAarr.push(doc.data());
-                            if(user) {
-                                if(doc.data().emails.includes(user.email)) {
-                                    namesArr.push(doc.id);
-                                }
-                            }
-                        });
-                        setShows([...dataAarr]);
-                        setLikedShows([...namesArr]);
-                    })();
-                } catch(e) {
-                    console.log(e);
-                }
-            });
-        }
-    }, [db, auth]);
+        if(!shows.length) {
+            const response = await axios.get("https://api.tvmaze.com/shows?page=" + pageCounter );
+            setShows([...shows, ...response.data]);
+        }   
+    }, []);
+
+    const getMoreShows = () => {
+        setPageCounter(pageCounter+1);
+    }
+
+    useEffect(() => {
+        console.log(pageCounter);
+        (async() => {
+            const response = await axios.get("https://api.tvmaze.com/shows?page=" + pageCounter );
+            setShows([...shows, ...response.data]);
+        })();
+    }, [pageCounter]);
 
     useEffect(() => {
         setIsLoading(true);
@@ -88,7 +74,7 @@ function App() {
             setIsLoading(false);
         }, 200);
     }, [isLogin]);
-
+    
     const sortedShows = useMemo(() => {
         if (sortMehod === "rating, from-top") {
             return [...shows].sort(
@@ -129,11 +115,11 @@ function App() {
     return (
         <div className="App">
             <BrowserRouter>
+
                 <Header isLogin={isLogin} setModalVisible={setModalVisible} />
                 <Main
+                    getMoreShows={getMoreShows}
                     shows={sortedAndFilteredAndSearchedShows}
-                    setLikedShows={setLikedShows}
-                    likedShows={likedShows}
                     peopleList={peopleList}
                     isLogin={isLogin}
                     setIsLogin={setIsLogin}

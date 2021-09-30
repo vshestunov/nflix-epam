@@ -26,35 +26,79 @@ const Shows = (props) => {
     const [favArr, setFavArr] = useState([]);
     const [isRecModalVisible, setRecModalVisible] = useState(false);
     let [showForReccomend, setShowForReccomend] = useState("");
+    const [likedShowsIDs, setLikedShowsIDs] = useState([]);
+    const [allLikedShowsIDs, setAllLikedShowsIDs] = useState([]);
+    const [likedShows, setLikedShows] = useState([]);
 
     useEffect(() => {
         onAuthStateChanged(auth, (user) => {
-            setCompareMail(user.email);
+            if (user) {
+                setCompareMail(user.email);
+            }
             try {
                 (async () => {
                     const querySnapshot = await getDocs(
                         collection(db, "users")
                     );
                     querySnapshot.forEach((doc) => {
-                        if (doc.id === user.email) {
-                            let arr = [];
-                            let friendsArr = [];
-                            doc.data().favorites.forEach((fav) =>
-                                arr.push(fav.name)
-                            );
-                            doc.data().friends.forEach((man) =>
-                                friendsArr.push(man)
-                            );
-                            setFavArr([...arr]);
-                            setFriendList([...friendsArr]);
+                        if (user) {
+                            if (doc.id === user.email) {
+                                let arr = [];
+                                let friendsArr = [];
+                                doc.data().favorites.forEach((fav) =>
+                                    arr.push(fav.name)
+                                );
+                                doc.data().friends.forEach((man) =>
+                                    friendsArr.push(man)
+                                );
+                                setFavArr([...arr]);
+                                setFriendList([...friendsArr]);
+                            }
                         }
                     });
+                })();
+
+                (async () => {
+                    const querySnapshot = await getDocs(
+                        collection(db, "likes")
+                    );
+                    let dataAarr = [];
+                    let idArr = [];
+                    let allIDsArr = [];
+                    querySnapshot.forEach((doc) => {
+                        dataAarr.push(doc.data());
+                        allIDsArr.push(doc.data().id);
+                        if (user) {
+                            if (doc.data().emails.includes(user.email)) {
+                                idArr.push(doc.data().id);
+                            }
+                        }
+                    });
+                    setLikedShows([...dataAarr]);
+                    setLikedShowsIDs([...idArr]);
+                    setAllLikedShowsIDs([...allIDsArr]);
                 })();
             } catch (e) {
                 console.log(e);
             }
         });
-    }, [auth, db]);
+    }, [auth]);
+
+    useEffect(() => {
+        try {
+            (async () => {
+                const querySnapshot = await getDocs(collection(db, "likes"));
+                let dataAarr = [];
+                querySnapshot.forEach((doc) => {
+                    dataAarr.push(doc.data());
+                });
+                console.log("render");
+                setLikedShows([...dataAarr]);
+            })();
+        } catch (e) {
+            console.log(e);
+        }
+    }, [likedShowsIDs]);
 
     let genresArr = [];
     props.shows.map((show) => {
@@ -108,34 +152,59 @@ const Shows = (props) => {
             props.setModalVisible(true);
             return null;
         }
-        const likedShow = doc(db, "likedshows", show.name);
+        for (let i = 0; i < likedShows.length; i++) {
+            if (likedShows[i].id === show.id) {
+                const likedShow = doc(db, "likes", show.name);
+                try {
+                    (async () => {
+                        await updateDoc(likedShow, {
+                            emails: arrayUnion(compareMail),
+                            likes: increment(1),
+                        });
+                        setLikedShowsIDs([...likedShowsIDs, show.id]);
+                    })();
+
+                    return;
+                } catch (e) {
+                    console.log(e);
+                }
+            }
+        }
         try {
             (async () => {
-                await updateDoc(likedShow, {
-                    emails: arrayUnion(compareMail),
-                    likes: increment(1),
+                await setDoc(doc(db, "likes", show.name), {
+                    name: show.name,
+                    emails: [compareMail],
+                    id: show.id,
+                    likes: 1,
                 });
+                setLikedShowsIDs([...likedShowsIDs, show.id]);
             })();
-            props.setLikedShows([...props.likedShows, show.name]);
         } catch (e) {
-            console.log(e);
+            console.error("Error adding document: ", e);
         }
     };
 
     const dislike = (show) => {
-        const likedShow = doc(db, "likedshows", show.name);
+        const likedShow = doc(db, "likes", show.name);
         try {
             (async () => {
                 await updateDoc(likedShow, {
                     emails: arrayRemove(compareMail),
                     likes: increment(-1),
                 });
+                setLikedShowsIDs(likedShowsIDs.filter((el) => el !== show.id));
             })();
-            props.setLikedShows(
-                props.likedShows.filter((el) => el !== show.name)
-            );
         } catch (e) {
             console.log(e);
+        }
+    };
+
+    const getLikes = (show) => {
+        for (let i = 0; i < likedShows.length; i++) {
+            if (likedShows[i].id === show.id) {
+                return likedShows[i].likes;
+            }
         }
     };
 
@@ -195,24 +264,30 @@ const Shows = (props) => {
 
             <div className="shows-cont">
                 {props.shows.map((show) => {
+                    let currentLikes = 0;
+                    if (allLikedShowsIDs.includes(show.id)) {
+                        currentLikes = getLikes(show);
+                    }
                     return (
                         <div key={show.id} className="show">
                             <NavLink to={`shows/${show.id}`}>
                                 <h4>{show.name}</h4>
-                                <img src={show.image.medium} />
+                                {show.image ? (
+                                    <img src={show.image.medium} />
+                                ) : (
+                                    <img alt={"no image"} />
+                                )}
                                 <div className="show-description-cont">
-                                    <p>Time: {show.averageRuntime}</p>
-                                    <p>Rating: {show.rating.average}</p>
-                                    <p>Likes: {show.likes}</p>
+                                    <p className='likes-and-rat'> <span>&#9733;: {show.rating.average}</span><span>&#8987;: {show.averageRuntime}</span><span>&#9829;: {currentLikes}</span></p>
                                 </div>
                             </NavLink>
                             <div className="shows-buttons">
-                                {props.likedShows.includes(show.name) ? (
+                                {likedShowsIDs.includes(show.id) ? (
                                     <button
                                         className="button shows-button"
                                         onClick={() => {
                                             dislike(show);
-                                            show.likes--;
+                                            currentLikes++;
                                         }}
                                     >
                                         Disike &#9829;
@@ -222,7 +297,6 @@ const Shows = (props) => {
                                         className="button shows-button"
                                         onClick={() => {
                                             like(show);
-                                            show.likes++;
                                         }}
                                     >
                                         Like &#9825;
@@ -298,6 +372,12 @@ const Shows = (props) => {
                         action={props.setSortMethod}
                         method={props.sortMethod}
                     />
+                    <button
+                        className="button get-shows-button"
+                        onClick={props.getMoreShows}
+                    >
+                        Get More Shows
+                    </button>
                 </div>
             </div>
         </div>

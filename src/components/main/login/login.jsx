@@ -110,7 +110,7 @@ const Login = (props) => {
                 <div>
                     <form className="login-form">
                         <h2>Please type in your credentials to Log In</h2>
-                        <span>Username</span>
+                        <span>E-mail</span>
                         <input
                             type="text"
                             value={userName}
@@ -152,7 +152,7 @@ const Login = (props) => {
                             Please provide your credentials to register an
                             account
                         </h2>
-                        <span>Username</span>
+                        <span>E-mail</span>
                         <input
                             type="text"
                             value={userName}
@@ -160,7 +160,7 @@ const Login = (props) => {
                             onChange={(e) => setUsetName(e.target.value)}
                             required
                         />
-                        <span>Password</span>
+                        <span>Password (not less then 8 characters)</span>
                         <input
                             type="password"
                             value={password}
