@@ -89,11 +89,14 @@ const Shows = (props) => {
             (async () => {
                 const querySnapshot = await getDocs(collection(db, "likes"));
                 let dataAarr = [];
+                let allIDsArr = [];
                 querySnapshot.forEach((doc) => {
                     dataAarr.push(doc.data());
+                    allIDsArr.push(doc.data().id);
                 });
                 console.log("render");
                 setLikedShows([...dataAarr]);
+                setAllLikedShowsIDs([...allIDsArr]);
             })();
         } catch (e) {
             console.log(e);
