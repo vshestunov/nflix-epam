@@ -6,10 +6,10 @@ const Home = (props) => {
     return (
         <div className="home">
             <div className="headers-cont">
-                <h1>Welcome to my like-a-netflix service</h1>
+                <h1>Welcome to my like-a-netflix App</h1>
                 <h2>
                     Feel free to use the navigation bar at the header and go
-                    throw the App ;){" "}
+                    through the App ;){" "}
                 </h2>
                 <h3>My service has such features:</h3>
             </div>
@@ -18,14 +18,14 @@ const Home = (props) => {
                     On <NavLink to="/shows">SHOWS</NavLink> page
                 </h4>
                 <ul>
-                    <li>Uploads the shows from API</li>
+                    <li>Renders the shows from API</li>
                     <li>You can SORT, FILTER and SEARCH shows</li>
                     <li>
-                        You can LIKE shows from different accounts and see
-                        result from any account
+                        You can LIKE/DISLIKE shows from different accounts and see
+                        results from any account
                     </li>
                     <li>You can add/remove shows to FAVORITES</li>
-                    <li>You can share shows with your FRIENDS</li>
+                    <li>You can recommend shows to your FRIENDS</li>
                 </ul>
             </div>
             <div className="features-cont">
@@ -41,10 +41,10 @@ const Home = (props) => {
             </div>
             <div className="features-cont">
                 <h4>
-                    On <NavLink to="/friends">FRIENDS</NavLink> page
+                    On <NavLink to="/people">PEOPLE</NavLink> page
                 </h4>
                 <ul>
-                    <li>Look at your friends and remove them from this list</li>
+                    <li>Look at all registered in App users and ADD/REMOVE them to your friends list</li>
                 </ul>
             </div>
             <div className="features-cont">
@@ -62,7 +62,7 @@ const Home = (props) => {
                 </h4>
                 <ul>
                     <li>
-                        Look at shows which other users (for whom you are a
+                        Look at the shows which other users (for whom you are a
                         friend) recommended to you
                     </li>
                 </ul>
